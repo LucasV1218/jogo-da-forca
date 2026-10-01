@@ -18,24 +18,45 @@
   
     var MAX_ERRORS = 6; // limite de erros: no 6º erro o jogador perde
   
-    // Banco de palavras. "w" = palavra, "h" = 3 dicas (da mais vaga à mais clara).
+    // Banco de palavras. "c" = categoria, "w" = palavra, "h" = 3 dicas (da mais vaga à mais clara).
     // Para adicionar uma palavra, basta incluir uma nova linha neste formato.
     var WORDS = [
-      { w: 'ABACAXI', h: ['Fruta', 'Usa uma coroa de folhas pontiagudas', 'Casca áspera, polpa amarela e ácida'] },
-      { w: 'ELEFANTE', h: ['Animal', 'É o maior mamífero que anda em terra firme', 'Tem presas de marfim e uma tromba longa'] },
-      { w: 'BORBOLETA', h: ['Animal', 'Antes de ser assim, passou por um casulo', 'Inseto de asas coloridas que visita flores'] },
-      { w: 'CHOCOLATE', h: ['Comida', 'Nasce de uma semente tropical', 'Doce que derrete na boca, feito de cacau'] },
-      { w: 'MONTANHA', h: ['Natureza', 'Quanto mais alta, mais fria', 'Grande elevação natural, às vezes com neve no topo'] },
-      { w: 'BIBLIOTECA', h: ['Lugar', 'O silêncio é a regra da casa', 'Estantes cheias de livros para ler e emprestar'] },
-      { w: 'GUARDA-CHUVA', h: ['Objeto', 'Aparece quando o tempo fecha', 'Abre-se sobre a cabeça para proteger da água'] },
-      { w: 'TECLADO', h: ['Tecnologia', 'Tem mais de uma centena de teclas', 'Periférico em que se digita'] },
-      { w: 'JAVASCRIPT', h: ['Tecnologia', 'Roda dentro do navegador', 'Linguagem que dá comportamento às páginas web'] },
-      { w: 'VIOLÃO', h: ['Música', 'Tem seis cordas', 'Instrumento de madeira, presença certa em rodas de samba'] },
-      { w: 'FAROL', h: ['Lugar', 'Fica à beira-mar', 'Torre de luz giratória que orienta os navios'] },
-      { w: 'RELÓGIO', h: ['Objeto', 'Anda sem parar, mas nunca sai do lugar', 'Seus ponteiros marcam as horas'] },
-      { w: 'COMPUTADOR', h: ['Tecnologia', 'Processa dados em silêncio', 'Máquina com tela, teclado e processador'] },
-      { w: 'ARQUITETURA', h: ['Profissão', 'Une beleza e engenharia', 'Arte e técnica de projetar edifícios'] },
-      { w: 'PIRÂMIDE', h: ['Lugar', 'Faraós descansavam dentro de uma', 'Monumento egípcio de base quadrada e quatro faces triangulares'] }
+      { c: 'Animais', w: 'COELHO', h: ['Tem duas orelhas compridas', 'Dá saltos e adora cenoura', 'Mamífero fofo que vive em tocas'] },
+      { c: 'Animais', w: 'TUBARÃO', h: ['Vive no mar', 'Sua nadadeira dorsal assusta banhistas', 'Peixe predador de dentes afiados'] },
+      { c: 'Animais', w: 'ELEFANTE', h: ['Animal', 'É o maior mamífero que anda em terra firme', 'Tem presas de marfim e uma tromba longa'] },
+      { c: 'Animais', w: 'BORBOLETA', h: ['Animal', 'Antes de ser assim, passou por um casulo', 'Inseto de asas coloridas que visita flores'] },
+      { c: 'Animais', w: 'RINOCERONTE', h: ['Pesado e de pele grossa', 'Vive na savana africana e na Ásia', 'Tem um ou dois chifres sobre o nariz'] },
+      { c: 'Animais', w: 'ORNITORRINCO', h: ['Vive na Austrália', 'É um mamífero que põe ovos', 'Tem bico de pato e cauda de castor'] },
+      { c: 'Comida', w: 'ABACAXI', h: ['Fruta', 'Usa uma coroa de folhas pontiagudas', 'Casca áspera, polpa amarela e ácida'] },
+      { c: 'Comida', w: 'BANANA', h: ['Fruta amarela', 'Vem em cachos', 'Descasca-se e é a favorita dos macacos'] },
+      { c: 'Comida', w: 'CHOCOLATE', h: ['Comida', 'Nasce de uma semente tropical', 'Doce que derrete na boca, feito de cacau'] },
+      { c: 'Comida', w: 'MACARRÃO', h: ['Prato italiano muito popular', 'Cozinha-se em água fervente', 'Vem em formatos como espaguete e penne'] },
+      { c: 'Comida', w: 'BRIGADEIRO', h: ['Doce de festa infantil brasileiro', 'Feito com leite condensado e chocolate', 'Bolinha coberta de granulado'] },
+      { c: 'Comida', w: 'PÃO-DE-QUEIJO', h: ['Típico de Minas Gerais', 'Lanche quentinho, ótimo com café', 'Bolinha assada de polvilho e queijo'] },
+      { c: 'Natureza', w: 'VULCÃO', h: ['Tem uma cratera no topo', 'Pode entrar em erupção', 'Montanha que expele lava e cinzas'] },
+      { c: 'Natureza', w: 'CASCATA', h: ['Água em movimento', 'A água despenca de um desnível', 'Queda de água em um rio, formando espuma'] },
+      { c: 'Natureza', w: 'MONTANHA', h: ['Natureza', 'Quanto mais alta, mais fria', 'Grande elevação natural, às vezes com neve no topo'] },
+      { c: 'Natureza', w: 'FLORESTA', h: ['Cheia de árvores', 'Abriga muitos animais e plantas', 'A Amazônia é a maior do tipo tropical'] },
+      { c: 'Natureza', w: 'TEMPESTADE', h: ['Muda o tempo de repente', 'Traz nuvens escuras, vento e chuva forte', 'Tem relâmpagos e trovões'] },
+      { c: 'Natureza', w: 'CORDILHEIRA', h: ['Fica em terreno bem alto', 'Os Andes são um exemplo', 'Longa sequência de montanhas encadeadas'] },
+      { c: 'Lugares', w: 'FAROL', h: ['Lugar', 'Fica à beira-mar', 'Torre de luz giratória que orienta os navios'] },
+      { c: 'Lugares', w: 'PRAIA', h: ['Faz calor e tem gente de chinelo', 'Areia, mar e guarda-sol', 'Faixa de areia à beira do mar'] },
+      { c: 'Lugares', w: 'PIRÂMIDE', h: ['Lugar', 'Faraós descansavam dentro de uma', 'Monumento egípcio de base quadrada e quatro faces triangulares'] },
+      { c: 'Lugares', w: 'AEROPORTO', h: ['Sempre cheio de malas', 'Tem pistas e portões de embarque', 'Onde os aviões pousam e decolam'] },
+      { c: 'Lugares', w: 'BIBLIOTECA', h: ['Lugar', 'O silêncio é a regra da casa', 'Estantes cheias de livros para ler e emprestar'] },
+      { c: 'Lugares', w: 'LABORATÓRIO', h: ['Local de trabalho de cientistas', 'Tem tubos de ensaio e microscópios', 'Cientistas fazem experimentos aqui'] },
+      { c: 'Objetos', w: 'RELÓGIO', h: ['Objeto', 'Anda sem parar, mas nunca sai do lugar', 'Seus ponteiros marcam as horas'] },
+      { c: 'Objetos', w: 'VIOLÃO', h: ['Música', 'Tem seis cordas', 'Instrumento de madeira, presença certa em rodas de samba'] },
+      { c: 'Objetos', w: 'LANTERNA', h: ['Ajuda no escuro', 'Funciona com pilhas', 'Projeta um facho de luz e se carrega na mão'] },
+      { c: 'Objetos', w: 'BICICLETA', h: ['Meio de transporte sem motor', 'Anda movida pela força das pernas', 'Duas rodas, guidão, pedais e corrente'] },
+      { c: 'Objetos', w: 'GUARDA-CHUVA', h: ['Objeto', 'Aparece quando o tempo fecha', 'Abre-se sobre a cabeça para proteger da água'] },
+      { c: 'Objetos', w: 'TELESCÓPIO', h: ['Aponta para o céu', 'Os astrônomos o usam', 'Instrumento com lentes que aproxima estrelas e planetas'] },
+      { c: 'Tecnologia', w: 'TECLADO', h: ['Tecnologia', 'Tem mais de uma centena de teclas', 'Periférico em que se digita'] },
+      { c: 'Tecnologia', w: 'MONITOR', h: ['Fica sobre a mesa do escritório', 'Mostra imagens', 'Tela que exibe o que o computador processa'] },
+      { c: 'Tecnologia', w: 'INTERNET', h: ['Conecta o mundo todo', 'Funciona com Wi-Fi ou cabo', 'Rede mundial de computadores'] },
+      { c: 'Tecnologia', w: 'NAVEGADOR', h: ['Programa usado todos os dias', 'Chrome e Firefox são exemplos', 'Abre sites e páginas da web'] },
+      { c: 'Tecnologia', w: 'JAVASCRIPT', h: ['Tecnologia', 'Roda dentro do navegador', 'Linguagem que dá comportamento às páginas web'] },
+      { c: 'Tecnologia', w: 'COMPUTADOR', h: ['Tecnologia', 'Processa dados em silêncio', 'Máquina com tela, teclado e processador'] }
     ];
   
     /* ---------- 2. REFERÊNCIAS AOS ELEMENTOS DA PÁGINA ----------
@@ -58,7 +79,17 @@
       hintChoices: document.getElementById('hintChoices'), // botões de nº de dicas
       setupNote: document.getElementById('setupNote'),
       startBtn: document.getElementById('startBtn'),
-      player: document.getElementById('player')      // linha "Jogador · Dificuldade"
+      player: document.getElementById('player'),     // linha "Jogador · Dificuldade · Categoria"
+      cats: document.getElementById('cats'),         // botões de categoria
+      result: document.getElementById('result'),     // tela de resultado
+      resultTitle: document.getElementById('resultTitle'),
+      resultText: document.getElementById('resultText'),
+      resultWord: document.getElementById('resultWord'),
+      resultStats: document.getElementById('resultStats'),
+      resultScore: document.getElementById('resultScore'),
+      againBtn: document.getElementById('againBtn'),
+      changeBtn: document.getElementById('changeBtn'),
+      viewBtn: document.getElementById('viewBtn')
     };
 
     /* Dificuldades: "max" = maior nº de letras da palavra; "hints" = dicas sugeridas.
@@ -68,7 +99,8 @@
       medium: { label: 'Médio',   max: 9,        hints: 2, note: 'Palavras de 8 a 9 letras.' },
       hard:   { label: 'Difícil', max: Infinity, hints: 1, note: 'Palavras de 10 letras ou mais.' }
     };
-    var settings = { name: '', level: 'medium', hints: 2 }; // escolhas atuais do jogador
+    var settings = { name: '', level: 'medium', hints: 2, cat: 'all', score: { w: 0, l: 0 } }; // escolhas atuais + placar da sessão
+    var resultTimer; // temporizador que abre a tela de resultado
   
     var state;     // guarda os dados da partida atual (criado em newGame)
     var last = ''; // última palavra sorteada (para não repetir em seguida)
@@ -92,6 +124,19 @@
       return n <= LEVELS.easy.max ? 'easy' : n <= LEVELS.medium.max ? 'medium' : 'hard';
     }
 
+    // Palavras que combinam com a categoria ("all" = todas) e a dificuldade.
+    function poolFor(cat, level) {
+      return WORDS.filter(function (x) {
+        return (cat === 'all' || x.c === cat) && levelOf(x.w) === level;
+      });
+    }
+
+    // Formata milissegundos como m:ss.
+    function fmtTime(ms) {
+      var s = Math.round(ms / 1000);
+      return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+    }
+
     // Mostra uma mensagem; "cls" escolhe a cor (warn, win ou lose).
     function say(text, cls) {
       el.msg.textContent = text;
@@ -102,7 +147,7 @@
   
     function newGame() {
       // Sorteia uma palavra da dificuldade escolhida (sem repetir a anterior).
-      var pool = WORDS.filter(function (x) { return levelOf(x.w) === settings.level; });
+      var pool = poolFor(settings.cat, settings.level);
       var i;
       do { i = Math.floor(Math.random() * pool.length); } while (pool[i].w === last && pool.length > 1);
       var entry = pool[i];
@@ -117,8 +162,14 @@
         hits: [],              // letras acertadas
         misses: [],            // letras erradas
         over: false,           // true quando o jogo termina
-        lost: false            // true se terminou em derrota
+        lost: false,           // true se terminou em derrota
+        start: Date.now(),     // hora de início (para o tempo de jogo)
+        elapsed: 0             // duração da partida, definida em finish()
       };
+
+      // Fecha a tela de resultado da partida anterior.
+      clearTimeout(resultTimer);
+      el.result.hidden = true;
   
       // Remove qualquer comemoração da partida anterior.
       clearTimeout(confettiTimer);
@@ -220,18 +271,66 @@
       confettiTimer = setTimeout(function () { el.confetti.innerHTML = ''; }, 6000);
     }
   
-    // Encerra a partida: bloqueia entradas e mostra o resultado.
+    // Encerra a partida: bloqueia entradas, atualiza o placar e abre a tela de resultado.
     function finish(lost) {
       state.over = true;
       state.lost = lost;
+      state.elapsed = Date.now() - state.start;
       el.kb.classList.add('locked'); // deixa o teclado "apagado"
-      if (lost) say('Fim de jogo, ' + settings.name + '. A palavra era ' + state.word + '.', 'lose');
-      else {
+      if (lost) {
+        settings.score.l++;
+        say('Fim de jogo, ' + settings.name + '. A palavra era ' + state.word + '.', 'lose');
+      } else {
+        settings.score.w++;
         say('Vitória, ' + settings.name + '! Você descobriu a palavra.', 'win');
         celebrate(); // só comemora quando o jogador vence
       }
+      // Espera um instante: dá tempo de ver a palavra (e a onda de letras na vitória).
+      clearTimeout(resultTimer);
+      resultTimer = setTimeout(showResult, lost ? 900 : 1500);
     }
-  
+
+    // Frase de desempenho para a tela de vitória.
+    function praise() {
+      var e = state.misses.length;
+      if (e === 0 && state.hintsShown === 0) return 'Partida perfeita: nenhum erro e nenhuma dica.';
+      if (e === 0) return 'Sem nenhum erro!';
+      if (e <= 2) return 'Excelente: apenas ' + e + (e === 1 ? ' erro.' : ' erros.');
+      if (e <= 4) return 'Bem jogado. A forca passou perto.';
+      return 'Vitória no limite: faltou pouco!';
+    }
+
+    // Monta e abre a tela de resultado a partir do state.
+    function showResult() {
+      var lost = state.lost;
+      var uniq = state.key.split('').filter(function (k, i, a) { return isLetter(k) && a.indexOf(k) === i; }).length;
+      var hintsTxt = state.hints.length ? state.hintsShown + ' de ' + state.hints.length : 'Sem dicas';
+      var stats = lost
+        ? [['Letras certas', state.hits.length + ' de ' + uniq], ['Erros', state.misses.length + ' de ' + MAX_ERRORS], ['Tempo', fmtTime(state.elapsed)]]
+        : [['Erros', state.misses.length + ' de ' + MAX_ERRORS], ['Dicas', hintsTxt], ['Tempo', fmtTime(state.elapsed)]];
+
+      el.result.className = 'result ' + (lost ? 'lose' : 'win');
+      el.resultTitle.textContent = lost ? 'Não foi dessa vez, ' + settings.name : 'Vitória, ' + settings.name + '!';
+      el.resultText.textContent = lost ? 'Você usou as ' + MAX_ERRORS + ' chances. A palavra era:' : praise();
+      el.resultWord.textContent = state.word;
+
+      el.resultStats.innerHTML = '';
+      stats.forEach(function (st) {
+        var d = document.createElement('div');
+        var dt = document.createElement('dt'); dt.textContent = st[0];
+        var dd = document.createElement('dd'); dd.textContent = st[1];
+        d.appendChild(dt); d.appendChild(dd);
+        el.resultStats.appendChild(d);
+      });
+
+      var w = settings.score.w, l = settings.score.l;
+      el.resultScore.textContent = 'Sessão: ' + w + (w === 1 ? ' vitória' : ' vitórias') + ' · ' + l + (l === 1 ? ' derrota' : ' derrotas');
+      el.againBtn.textContent = lost ? 'Tentar outra palavra' : 'Jogar de novo';
+
+      el.result.hidden = false;
+      el.againBtn.focus();
+    }
+
     /* ---------- 7. PROCESSAR UMA TENTATIVA ----------
        Recebe o texto digitado/clicado e decide o que fazer.
        A ordem das verificações importa: do bloqueio ao resultado. */
@@ -262,7 +361,8 @@
       } else {
         state.misses.push(c);        // erro: soma ao contador (o desenho avança no render)
         btn.className = 'miss';
-        say('A letra ' + c + ' não está na palavra.', '');
+        if (state.misses.length === MAX_ERRORS - 1) say('A letra ' + c + ' não está na palavra. Atenção: última chance!', 'alert');
+        else say('A letra ' + c + ' não está na palavra.', '');
       }
   
       // 5) Verifica se a partida terminou (vitória tem prioridade).
@@ -287,6 +387,7 @@
   
     // 8.2 Teclado físico: escuta qualquer tecla pressionada na página.
     document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !el.result.hidden) { el.result.hidden = true; return; }
       if (!el.setup.hidden) return;                          // digitando o nome: não é jogada
       if (e.ctrlKey || e.metaKey || e.altKey) return;        // deixa atalhos (Ctrl+C...) em paz
       if (e.key.length !== 1 || e.key === ' ') return;       // ignora Enter, Shift, setas e espaço
@@ -313,13 +414,19 @@
     }
 
     function refreshSetup() {
+      mark(el.cats, 'data-cat', settings.cat);
       mark(el.levels, 'data-level', settings.level);
       mark(el.hintChoices, 'data-n', settings.hints);
-      el.setupNote.textContent = LEVELS[settings.level].note;
+      var n = poolFor(settings.cat, settings.level).length;
+      el.setupNote.textContent = LEVELS[settings.level].note + ' ' + n + (n === 1 ? ' palavra disponível' : ' palavras disponíveis') + ' nesta combinação.';
       el.startBtn.disabled = el.name.value.trim() === '';
     }
 
     function openSetup() {
+      clearTimeout(resultTimer);
+      clearTimeout(confettiTimer);
+      el.confetti.innerHTML = '';
+      el.result.hidden = true;
       el.name.value = settings.name;
       el.setup.hidden = false;
       refreshSetup();
@@ -327,6 +434,11 @@
     }
 
     // Ao trocar a dificuldade, sugere o nº de dicas dela (o jogador ainda pode mudar).
+    el.cats.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      settings.cat = b.getAttribute('data-cat');
+      refreshSetup();
+    });
     el.levels.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
       settings.level = b.getAttribute('data-level');
@@ -343,10 +455,11 @@
     function start() {
       var n = el.name.value.trim();
       if (!n) { el.name.focus(); return; }
+      if (n !== settings.name) settings.score = { w: 0, l: 0 }; // novo jogador, placar zerado
       settings.name = n;
       el.setup.hidden = true;
       el.player.innerHTML = '';
-      el.player.appendChild(document.createTextNode(n + ' · ' + LEVELS[settings.level].label)); // textContent: seguro contra HTML digitado
+      el.player.appendChild(document.createTextNode(n + ' · ' + LEVELS[settings.level].label + ' · ' + (settings.cat === 'all' ? 'Todas as categorias' : settings.cat))); // textContent: seguro contra HTML digitado
       var change = document.createElement('button');
       change.type = 'button'; change.className = 'link'; change.textContent = 'Alterar';
       change.addEventListener('click', openSetup);
@@ -354,6 +467,11 @@
       newGame();
     }
     el.startBtn.addEventListener('click', start);
+
+    // Botões da tela de resultado.
+    el.againBtn.addEventListener('click', newGame);
+    el.changeBtn.addEventListener('click', openSetup);
+    el.viewBtn.addEventListener('click', function () { el.result.hidden = true; });
     el.name.addEventListener('keydown', function (e) { if (e.key === 'Enter') start(); });
 
     /* ---------- 10. COMEÇAR ---------- */

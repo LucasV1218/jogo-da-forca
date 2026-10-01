@@ -28,6 +28,17 @@
         <label class="label" for="name">Seu nome</label>
         <input id="name" type="text" maxlength="20" autocomplete="off" placeholder="Como devemos chamar você?">
 
+        <div class="label">Categoria</div>
+        <div id="cats" class="choices wrap" role="radiogroup" aria-label="Categoria">
+          <button type="button" role="radio" data-cat="all">Todas</button>
+          <button type="button" role="radio" data-cat="Animais">Animais</button>
+          <button type="button" role="radio" data-cat="Comida">Comida</button>
+          <button type="button" role="radio" data-cat="Natureza">Natureza</button>
+          <button type="button" role="radio" data-cat="Lugares">Lugares</button>
+          <button type="button" role="radio" data-cat="Objetos">Objetos</button>
+          <button type="button" role="radio" data-cat="Tecnologia">Tecnologia</button>
+        </div>
+
         <div class="label">Dificuldade</div>
         <div id="levels" class="choices" role="radiogroup" aria-label="Dificuldade">
           <button type="button" role="radio" data-level="easy"><b>Fácil</b><small>Palavras curtas</small></button>
@@ -109,6 +120,23 @@
   <!-- Camada da comemoração: ocupa a tela toda, mas não bloqueia cliques.
        O JavaScript cria os confetes aqui dentro quando o jogador vence. -->
   <div id="confetti" aria-hidden="true"></div>
+
+  <!-- TELA DE RESULTADO: aparece ao fim da partida (vitória ou derrota).
+       O JS troca a classe win/lose e preenche os textos e números. -->
+  <div id="result" class="result" role="dialog" aria-modal="true" aria-labelledby="resultTitle" hidden>
+    <div class="result-box">
+      <h2 id="resultTitle"></h2>
+      <p class="result-text" id="resultText"></p>
+      <div class="result-word" id="resultWord"></div>
+      <dl class="stats" id="resultStats"></dl>
+      <p class="score" id="resultScore"></p>
+      <div class="result-actions">
+        <button id="againBtn" type="button" class="start"></button>
+        <button id="changeBtn" type="button" class="link">Alterar configurações</button>
+        <button id="viewBtn" type="button" class="link">Ver tabuleiro</button>
+      </div>
+    </div>
+  </div>
 
   <!-- O script fica no FIM do body para que os elementos acima já existam quando ele rodar -->
   <script src="script.js"></script>
