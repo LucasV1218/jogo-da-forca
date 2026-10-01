@@ -1,0 +1,235 @@
+/* ==========================================================
+   1. VARIÁVEIS (design tokens)
+   Definimos cores e fontes uma única vez. Para mudar o tema
+   inteiro, basta alterar os valores aqui.
+   ========================================================== */
+   :root{
+    --paper:#f5f2ec;   /* fundo marfim */
+    --ink:#1c1b19;     /* texto principal, quase preto */
+    --muted:#8a857c;   /* texto secundário (cinza quente) */
+    --line:#d9d4c8;    /* linhas finas e bordas */
+    --accent:#7a2e2e;  /* única cor de destaque (vinho) */
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif; /* lista de fontes: usa a primeira disponível */
+    --sans:"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  }
+  
+  /* Faz width/height incluírem padding e borda: facilita calcular tamanhos */
+  *{box-sizing:border-box}
+  
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);min-height:100vh}
+  
+  /* Coluna central com largura máxima: mantém a leitura confortável */
+  main{max-width:760px;margin:0 auto;padding:56px 24px 48px}
+  
+  /* ==========================================================
+     2. CABEÇALHO
+     ========================================================== */
+  header{text-align:center;margin-bottom:44px}
+  h1{
+    font-weight:400;font-size:44px;
+    letter-spacing:.32em;          /* espaço entre letras = ar de elegância */
+    text-transform:uppercase;
+    margin:0 0 10px;
+    padding-left:.32em;            /* compensa o espaço extra no fim, para centralizar de verdade */
+  }
+  .sub{margin:0;font-style:italic;color:var(--muted);font-size:17px}
+  
+  /* Rótulo pequeno usado acima de cada bloco ("PALAVRA", "ERROS"...) */
+  .label{font:11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  
+  /* ==========================================================
+     3. TABULEIRO (grid de 2 colunas)
+     ========================================================== */
+  .board{
+    display:grid;
+    grid-template-columns:240px 1fr;   /* coluna fixa do desenho + resto para informações */
+    gap:48px;padding:36px 0;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  /* Em telas estreitas (celular) empilha as colunas */
+  @media(max-width:640px){
+    .board{grid-template-columns:1fr;gap:28px}
+    .stage{margin:0 auto}
+  }
+  
+  /* ==========================================================
+     4. DESENHO DA FORCA
+     Tudo é feito com <div> posicionados dentro de uma caixa de
+     220x260px. position:absolute coloca cada peça por coordenadas
+     (left/top/bottom) relativas ao .stage.
+     ========================================================== */
+  .stage{position:relative;width:220px;height:260px}
+  .stage div{position:absolute;background:var(--ink)}
+  
+  /* Estrutura fixa */
+  .base{left:20px;bottom:0;width:160px;height:2px}
+  .pole{left:60px;bottom:0;width:2px;height:250px}
+  .beam{left:60px;top:10px;width:110px;height:2px}
+  .rope{left:169px;top:10px;width:1px;height:28px}
+  
+  /* Partes do boneco: começam transparentes e ganham a classe "show" via JS */
+  .part{opacity:0;transition:opacity .35s ease}   /* transition = fade suave */
+  .part.show{opacity:1}
+  
+  /* Cabeça: um círculo só com borda (border-radius:50% arredonda) */
+  .head{
+    left:150px;top:38px;width:40px;height:40px;
+    border:2px solid var(--accent);border-radius:50%;
+    background:transparent!important;   /* !important vence o fundo geral de ".stage div" */
+  }
+  /* Corpo, braços e pernas são linhas finas. transform-origin:top faz a
+     rotação girar a partir do ponto em que prendem ao corpo. */
+  .body,.arm,.leg{background:var(--accent)!important;width:2px;transform-origin:top center}
+  .body{left:169px;top:78px;height:70px}
+  .arm{top:92px;height:44px}
+  .arm.l{left:169px;transform:rotate(50deg)}    /* gira p/ um lado... */
+  .arm.r{left:169px;transform:rotate(-50deg)}   /* ...e p/ o outro */
+  .leg{top:148px;height:52px}
+  .leg.l{left:169px;transform:rotate(28deg)}
+  .leg.r{left:169px;transform:rotate(-28deg)}
+  
+  /* ==========================================================
+     5. COLUNA DE INFORMAÇÕES
+     ========================================================== */
+  .info{display:flex;flex-direction:column;gap:30px;min-width:0}
+  
+  /* Palavra: cada letra é uma "célula" com um traço embaixo (a lacuna) */
+  #word{display:flex;flex-wrap:wrap;gap:8px 10px;min-height:48px}
+  .cell{
+    display:inline-block;min-width:30px;height:46px;
+    border-bottom:1.5px solid var(--ink);   /* o traço da lacuna */
+    text-align:center;font-size:32px;line-height:44px;text-transform:uppercase;
+  }
+  .cell.gap{border:0;min-width:14px}        /* caracteres que não são letras (hífen): sem traço */
+  .cell.reveal{color:var(--accent)}         /* letras reveladas após a derrota ficam em vinho */
+  
+  /* Letras usadas à esquerda, contador à direita */
+  .meta{display:flex;justify-content:space-between;gap:24px}
+  .right{text-align:right}
+  #used{font-size:20px;letter-spacing:.18em;min-height:28px;text-transform:uppercase}
+  #used .hit{color:var(--ink)}                                   /* acerto */
+  #used .miss{color:var(--accent);text-decoration:line-through}  /* erro riscado */
+  #counter{font-size:20px}
+  
+  /* Dicas */
+  .hints ol{margin:0 0 12px;padding-left:20px;font-style:italic;font-size:17px;line-height:1.5;color:#3c3a36}
+  .hints li{margin-bottom:4px}
+  /* Botão com aparência de link sublinhado */
+  .link{
+    background:none;border:0;padding:0;
+    font:12px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:3px;cursor:pointer;
+  }
+  .link:disabled{color:var(--muted);border-color:var(--line);cursor:default}  /* estado desativado */
+  
+  /* ==========================================================
+     6. MENSAGENS
+     O JS troca a classe (warn/win/lose) para mudar a cor.
+     ========================================================== */
+  #msg{text-align:center;font-style:italic;font-size:18px;min-height:28px;margin:28px 0 20px}
+  #msg.warn{color:var(--muted)}
+  #msg.win{color:var(--ink);font-style:normal;letter-spacing:.04em}
+  #msg.lose{color:var(--accent)}
+  
+  /* ==========================================================
+     7. TECLADO VIRTUAL
+     ========================================================== */
+  #kb{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:560px;margin:0 auto}
+  #kb button{
+    width:40px;height:40px;background:transparent;border:1px solid var(--line);
+    color:var(--ink);font:15px var(--sans);cursor:pointer;
+    transition:background .15s,color .15s,border-color .15s;   /* animação suave ao mudar de estado */
+  }
+  #kb button:hover{border-color:var(--ink)}
+  #kb button.hit{background:var(--ink);color:var(--paper);border-color:var(--ink)}  /* tecla acertada: preenchida */
+  #kb button.miss{color:var(--muted);border-color:transparent;text-decoration:line-through} /* errada: riscada */
+  #kb button.hit,#kb button.miss{cursor:default}
+  #kb.locked button{opacity:.35;cursor:default}   /* fim de jogo: teclado "apagado" */
+  
+  /* ==========================================================
+     8. BOTÃO NOVA PARTIDA e ACESSIBILIDADE
+     ========================================================== */
+  footer{text-align:center;margin-top:44px}
+  #new{
+    background:var(--ink);color:var(--paper);border:0;padding:14px 34px;
+    font:12px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;
+    cursor:pointer;transition:background .2s;
+  }
+  #new:hover{background:var(--accent)}
+  /* Contorno visível ao navegar com Tab (importante para quem usa só o teclado) */
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  
+  /* ==========================================================
+     9. COMEMORAÇÃO DE VITÓRIA
+     ========================================================== */
+  
+  /* Camada fixa sobre a tela inteira. pointer-events:none deixa os cliques
+     "atravessarem" os confetes, para o jogador poder clicar em Nova partida. */
+  #confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}
+  
+  /* Cada confete é um pequeno retângulo (papel picado). O JS define, para cada um,
+     a posição inicial, a cor, a duração e as variáveis --dx (deslize lateral)
+     e --rot (giro), que a animação abaixo usa. */
+  .confetto{position:absolute;top:-20px;width:7px;height:14px;animation:fall linear forwards}
+  
+  /* Cai da parte de cima até além da base da tela, girando e desbotando no fim */
+  @keyframes fall{
+    0%  {transform:translate3d(0,0,0) rotate(0);opacity:1}
+    85% {opacity:1}
+    100%{transform:translate3d(var(--dx),105vh,0) rotate(var(--rot));opacity:0}
+  }
+  
+  /* As letras da palavra "saltam" uma depois da outra, como uma onda.
+     --i é o número da letra (definido pelo JS) e cria o atraso escalonado. */
+  .cell.win{color:var(--accent);animation:pop .6s ease both;animation-delay:calc(var(--i) * 80ms)}
+  @keyframes pop{
+    0%,100%{transform:translateY(0)}
+    40%    {transform:translateY(-12px)}
+  }
+  
+  /* Mensagem de vitória um pouco maior, com destaque */
+  #msg.win{font-size:22px;color:var(--accent)}
+  
+  /* Respeita quem desativou animações no sistema (acessibilidade) */
+  @media (prefers-reduced-motion:reduce){
+    #confetti{display:none}
+    .cell.win{animation:none}
+  }
+/* ==========================================================
+   10. TELA DE CONFIGURAÇÃO (nome, dificuldade, dicas)
+   ========================================================== */
+.player{margin:14px 0 0;font-size:16px;color:var(--ink)}
+.player .link{margin-left:14px}
+
+/* Camada que cobre a tela até o jogador começar */
+.setup{position:fixed;inset:0;z-index:20;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
+.setup[hidden]{display:none}
+.setup-box{width:100%;max-width:460px}
+.setup-box h2{font-weight:400;font-size:30px;margin:0 0 28px;text-align:center}
+.setup-box .label{margin:24px 0 10px}
+#name{
+  width:100%;padding:10px 0;font:20px var(--serif);color:var(--ink);
+  background:transparent;border:0;border-bottom:1.5px solid var(--ink);border-radius:0;
+}
+#name:focus{outline:none;border-color:var(--accent)}
+#name::placeholder{color:var(--muted);font-style:italic}
+
+.choices{display:flex;gap:8px}
+.choices button{
+  flex:1;padding:12px 8px;background:transparent;border:1px solid var(--line);
+  color:var(--ink);font:16px var(--serif);cursor:pointer;
+  display:flex;flex-direction:column;gap:4px;align-items:center;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.choices button small{font:12px var(--sans);color:var(--muted)}
+.choices button:hover{border-color:var(--ink)}
+.choices button[aria-checked="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.choices button[aria-checked="true"] small{color:var(--line)}
+.note{margin:12px 0 0;font-style:italic;color:var(--muted);font-size:15px;min-height:22px}
+.start{
+  display:block;width:100%;margin-top:28px;background:var(--ink);color:var(--paper);border:0;padding:16px;
+  font:12px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:background .2s;
+}
+.start:hover{background:var(--accent)}
+.start:disabled{opacity:.35;cursor:default;background:var(--ink)}
+input:focus-visible{outline:none}
